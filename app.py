@@ -17,7 +17,7 @@ def piec():
     conn = psycopg2.connect("dbname ='sales_demo' user='postgres' host='localhost' password='#0724246005'")
     cur = conn.cursor()
 
-    cur.execute("""select sum(i.buying_price*s.quantity) as subtotal, EXTRACT(month from s.created_at) from sales as s join inventories as i
+    cur.execute("""select to_char(to_timestramp(date_part('month',s.created_at)::text,'MM')'Month'), sum(i.selling_price*s.quantity) as subtotal from sales as s join inventories as i
 on i.item_id = s.item_id group by extract(month from s.created_at) order by extract(month from s.created_at)""")
 
     rows = cur.fetchall()
