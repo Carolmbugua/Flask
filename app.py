@@ -10,10 +10,28 @@ def hello_world():
     y = 1000
     return render_template('index.html', x=y)
 
-
+import psycopg2
 
 @app.route('/pies')
 def piec():
+    conn = psycopg2.connect("dbname ='sales_demo' user='postgres' host='localhost' password='#0724246005'")
+    cur = conn.cursor()
+
+    cur.execute("""select sum(i.buying_price*s.quantity) as subtotal, EXTRACT(month from s.created_at) from sales as s join inventories as i
+on i.item_id = s.item_id group by extract(month from s.created_at) order by extract(month from s.created_at)""")
+
+    rows = cur.fetchall()
+    #print(type(rows))
+    x = []
+    y = []
+
+    for each in rows:
+        x.append(each[1])
+        y.append(each[0])
+
+    print(x)
+    print(y)
+
     ratios = [('Gentlemen', 5),('Ladies', 9)]
     pie_chart = pygal.Pie()
     pie_chart.title = 'Browser usage in February 2012 (in %)'
